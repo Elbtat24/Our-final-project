@@ -1,0 +1,668 @@
+﻿<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>MARS | Space Explorer</title>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css'>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #0b0c2a;
+            --secondary-color: #1a1c4e; 
+            --accent-color: #e55f45; 
+            --text-color: #e0e0e0;
+            --highlight-color: #f39041;
+            --mars-color: #e55f45;
+            --space-blue: #1a237e;
+            --neon-red: #ff4757;
+        }
+        
+        body {
+            background: #000;
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Stars background */
+        #stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+        
+        .star {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: twinkle 3s infinite alternate;
+        }
+        
+        @keyframes twinkle {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+        
+        /* Header & Navigation */
+        header {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(11, 12, 42, 0.9);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(229, 95, 69, 0.3);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #ff4757, #e55f45);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-decoration: none;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        .logo i {
+            font-size: 2rem;
+            color: var(--mars-color);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--mars-color);
+            transition: width 0.3s ease;
+        }
+        
+        nav a:hover {
+            color: var(--mars-color);
+            background: rgba(229, 95, 69, 0.1);
+        }
+        
+        nav a.active {
+            background: rgba(229, 95, 69, 0.2);
+            color: var(--mars-color);
+            border: 1px solid rgba(229, 95, 69, 0.5);
+        }
+        
+        /* Profile Header */
+        .profile-header {
+            text-align: center;
+            padding: 5rem 2rem 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(229, 95, 69, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
+            z-index: -1;
+        }
+        
+        .profile-img-large {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 8px solid rgba(229, 95, 69, 0.5);
+            box-shadow: 0 0 50px rgba(229, 95, 69, 0.7),
+                        inset 0 0 30px rgba(229, 95, 69, 0.3);
+            animation: float 6s ease-in-out infinite;
+            margin-bottom: 2rem;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .profile-name {
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #ffffff, var(--mars-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px rgba(229, 95, 69, 0.5);
+            letter-spacing: 2px;
+        }
+        
+        .profile-title {
+            font-size: 1.8rem;
+            color: rgba(224, 224, 224, 0.9);
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+        
+        /* Profile Bio Section */
+        .profile-bio-section {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+        }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, rgba(229, 95, 69, 0.8), rgba(255, 71, 87, 0.8));
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-bottom: 3rem;
+            box-shadow: 0 5px 15px rgba(229, 95, 69, 0.4);
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(229, 95, 69, 0.6);
+        }
+        
+        .bio-card {
+            background: linear-gradient(145deg, rgba(26, 28, 78, 0.7) 0%, rgba(11, 12, 42, 0.9) 100%);
+            border-radius: 25px;
+            overflow: hidden;
+            padding: 3rem;
+            transition: all 0.4s ease;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            position: relative;
+            border: 1px solid rgba(229, 95, 69, 0.3);
+            margin-bottom: 3rem;
+        }
+        
+        .bio-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 30%, rgba(229, 95, 69, 0.1) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .bio-paragraph {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            color: rgba(224, 224, 224, 0.9);
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .wiki-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(to right, var(--mars-color), #ff4757);
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(229, 95, 69, 0.4);
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
+        }
+        
+        .wiki-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .wiki-btn:hover::before {
+            left: 100%;
+        }
+        
+        .wiki-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(229, 95, 69, 0.6);
+        }
+        
+        /* Mars Facts Section */
+        .mars-facts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .fact-card {
+            background: rgba(26, 28, 78, 0.5);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid rgba(229, 95, 69, 0.3);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .fact-card:hover {
+            transform: translateY(-10px);
+            background: rgba(229, 95, 69, 0.1);
+            border-color: rgba(229, 95, 69, 0.7);
+        }
+        
+        .fact-card i {
+            font-size: 2.5rem;
+            color: var(--mars-color);
+            margin-bottom: 1rem;
+        }
+        
+        .fact-card h3 {
+            color: var(--mars-color);
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+        
+        .fact-card p {
+            color: rgba(224, 224, 224, 0.8);
+        }
+        
+        /* Planet decorations */
+        .planet {
+            position: absolute;
+            border-radius: 50%;
+            z-index: -1;
+        }
+        
+        .planet-1 {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 40% 40%, #1e90ff, #00008b);
+            top: 15%;
+            right: 10%;
+            box-shadow: 0 0 20px rgba(30, 144, 255, 0.5);
+            animation: orbit 40s linear infinite;
+        }
+        
+        .planet-2 {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle at 50% 50%, #26daaa, #1a8c6d);
+            bottom: 25%;
+            left: 8%;
+            box-shadow: 0 0 20px rgba(38, 218, 170, 0.5);
+            animation: orbit 60s linear infinite reverse;
+        }
+        
+        .planet-3 {
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle at 30% 30%, #ffd700, #ff8c00);
+            top: 60%;
+            right: 5%;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            animation: orbit 50s linear infinite;
+        }
+        
+        @keyframes orbit {
+            0% { transform: rotate(0deg) translateX(120px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(120px) rotate(-360deg); }
+        }
+        
+        /* Footer */
+        footer {
+            background: rgba(11, 12, 42, 0.9);
+            padding: 3rem 2rem;
+            margin-top: 5rem;
+            text-align: center;
+            border-top: 1px solid rgba(229, 95, 69, 0.3);
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(90deg, #ff4757, #e55f45);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+        
+        .footer-links a:hover {
+            color: var(--mars-color);
+            background: rgba(229, 95, 69, 0.1);
+        }
+        
+        .copyright {
+            margin-top: 2rem;
+            color: rgba(224, 224, 224, 0.6);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            nav ul {
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .profile-header {
+                padding: 3rem 1rem 2rem;
+            }
+            
+            .profile-img-large {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .profile-name {
+                font-size: 2.5rem;
+            }
+            
+            .profile-title {
+                font-size: 1.3rem;
+            }
+            
+            .profile-bio-section {
+                padding: 1rem;
+            }
+            
+            .bio-card {
+                padding: 2rem;
+            }
+            
+            .bio-paragraph {
+                font-size: 1.1rem;
+            }
+            
+            .mars-facts {
+                grid-template-columns: 1fr;
+            }
+            
+            .planet {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Stars background -->
+    <div id="stars"></div>
+    
+    <!-- Planets decorations -->
+    <div class="planet planet-1"></div>
+    <div class="planet planet-2"></div>
+    <div class="planet planet-3"></div>
+    
+    <header>
+        <a href="index.html" class="logo">
+            <i class="fas fa-globe-americas"></i> SPACE EXPLORER
+        </a>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#planets">Planets</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class='profile-header'>
+        <img src='https://images.unsplash.com/photo-1614314107768-6018061b5b72?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80' alt='MARS' class='profile-img-large'>
+        <h1 class='profile-name'>MARS</h1>
+        <p class='profile-title'>The Red Planet • Future Frontier</p>
+    </div>
+
+    <div class='profile-bio-section'>
+        <a href='index.html' class='back-btn'><i class='fas fa-arrow-left'></i> Back to Home</a>
+        
+        <div class="bio-card">
+            <p class='bio-paragraph'>
+                Mars is the fourth planet from the Sun and is often called the Red Planet because of its 
+                reddish surface, caused by iron oxide (rust) in the soil. It is the second smallest planet 
+                in our solar system, with a diameter about half that of Earth.
+            </p>
+            
+            <p class='bio-paragraph'>
+                Mars has a thin atmosphere composed mostly of carbon dioxide, with surface temperatures 
+                ranging from -125°C (-195°F) near the poles in winter to 20°C (70°F) at the equator at 
+                midday. The planet features the largest volcano in the solar system (Olympus Mons) and 
+                the deepest canyon (Valles Marineris).
+            </p>
+            
+            <p class='bio-paragraph'>
+                Scientists are particularly interested in Mars because evidence suggests it had liquid 
+                water on its surface in the distant past, raising the possibility that it may have once 
+                harbored life. Today, multiple space agencies are planning crewed missions to Mars, 
+                with the goal of establishing a human presence on the planet in the coming decades.
+            </p>
+            
+            <a href='https://en.wikipedia.org/wiki/Mars' target='_blank' class='wiki-btn'>
+                Explore More on Wikipedia <i class='fas fa-external-link-alt'></i>
+            </a>
+        </div>
+        
+        <div class="mars-facts">
+            <div class="fact-card">
+                <i class="fas fa-thermometer-half"></i>
+                <h3>Average Temperature</h3>
+                <p>-63°C (-81°F)</p>
+            </div>
+            
+            <div class="fact-card">
+                <i class="fas fa-ruler-combined"></i>
+                <h3>Diameter</h3>
+                <p>6,779 km (4,212 mi)</p>
+            </div>
+            
+            <div class="fact-card">
+                <i class="fas fa-sun"></i>
+                <h3>Distance from Sun</h3>
+                <p>227.9 million km</p>
+            </div>
+            
+            <div class="fact-card">
+                <i class="fas fa-mountain"></i>
+                <h3>Highest Mountain</h3>
+                <p>Olympus Mons (21.9 km)</p>
+            </div>
+        </div>
+    </div>
+
+      <footer>
+        <div class="footer-content">
+            <div class="footer-logo">SPACE EXPLORER BY ALBTAT</div>
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="index.html">Planets</a>
+                <a href="index.html">About</a>
+                <a href="index.html">Contact</a>
+            </div>
+            <div class="copyright">
+                &copy; 2025 BY MOHAMED ALBTAT. All cosmic rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Create twinkling stars
+        const starsContainer = document.getElementById('stars');
+        const starsCount = 200;
+
+        for (let i = 0; i < starsCount; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            
+            // Random position
+            const x = Math.random() * 100;
+            const y = Math.random() * 100;
+            
+            // Random size (1-3px)
+            const size = Math.random() * 3 + 1;
+            
+            // Random twinkle delay
+            const delay = Math.random() * 3;
+            
+            star.style.left = `${x}%`;
+            star.style.top = `${y}%`;
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            star.style.animationDelay = `${delay}s`;
+            
+            starsContainer.appendChild(star);
+        }
+        
+        // Add interactive effect to fact cards
+        document.querySelectorAll('.fact-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.05)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+        
+        // Add click effect to wiki button
+        const wikiBtn = document.querySelector('.wiki-btn');
+        wikiBtn.addEventListener('click', function(e) {
+            // Create ripple effect
+            const ripple = document.createElement('span');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.width = ripple.style.height = `${size}px`;
+            ripple.style.left = `${x}px`;
+            ripple.style.top = `${y}px`;
+            ripple.style.position = 'absolute';
+            ripple.style.borderRadius = '50%';
+            ripple.style.background = 'rgba(255, 255, 255, 0.3)';
+            ripple.style.transform = 'scale(0)';
+            ripple.style.animation = 'ripple 0.6s linear';
+            
+            this.appendChild(ripple);
+            
+            // Remove ripple after animation
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+        
+        // Add CSS for ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Mars image hover effect
+        const marsImg = document.querySelector('.profile-img-large');
+        marsImg.addEventListener('mouseenter', function() {
+            this.style.boxShadow = '0 0 70px rgba(229, 95, 69, 0.9), inset 0 0 40px rgba(229, 95, 69, 0.5)';
+            this.style.transform = 'scale(1.05) translateY(-20px)';
+        });
+        
+        marsImg.addEventListener('mouseleave', function() {
+            this.style.boxShadow = '0 0 50px rgba(229, 95, 69, 0.7), inset 0 0 30px rgba(229, 95, 69, 0.3)';
+            this.style.transform = 'scale(1) translateY(0)';
+        });
+        
+        // Add red pulse effect to title
+        const profileName = document.querySelector('.profile-name');
+        setInterval(() => {
+            profileName.style.textShadow = '0 0 25px rgba(229, 95, 69, 0.7)';
+            setTimeout(() => {
+                profileName.style.textShadow = '0 0 20px rgba(229, 95, 69, 0.5)';
+            }, 500);
+        }, 3000);
+    </script>
+</body>
+</html>
